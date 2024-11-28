@@ -21,9 +21,11 @@ public class OrderLineService {
     }
 
     public ResponseEntity<List<OrderLineResponse>> findByOrderId(Integer orderId) {
-        return orderLineRepository.findAllByOrderId(orderId)
-                .stream()
-                .map(mapper::toOrderLineResponse)
-                .collect(Collectors.toList());
+        return ResponseEntity.ok(
+                orderLineRepository.findAllByOrderId(orderId)
+                        .stream()
+                        .map(mapper::toOrderLineResponse)
+                        .collect(Collectors.toList())
+        );
     }
 }

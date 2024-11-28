@@ -1,0 +1,5 @@
+# Created at 2024-11-28T14:32:13.833
+Boot Manifest-JAR contains absolute paths in classpath 'D:\ThisPC\Projects\Ecommerce-Microservice-SEAL\seal-e-commerce-app\services\config-server\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+

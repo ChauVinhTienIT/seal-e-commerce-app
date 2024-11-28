@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.seal.configserver.ConfigServerApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.742 s -- in com.seal.configserver.ConfigServerApplicationTests
