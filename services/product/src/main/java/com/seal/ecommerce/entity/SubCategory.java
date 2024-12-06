@@ -7,20 +7,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "categories")
-public class Category {
+@Table(name = "sub_categories")
+public class SubCategory {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categories_id")
+    private Category categories;
+
+    @Column(name = "name", length = Integer.MAX_VALUE)
     private String name;
-
-    @Column(name = "image")
-    private String image;
-
-    @Column(name = "enabled")
-    private Boolean enabled;
 
 }
