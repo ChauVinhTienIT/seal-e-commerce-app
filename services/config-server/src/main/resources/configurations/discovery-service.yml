@@ -8,4 +8,4 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}/${server.port}/eureka/ # The URL of the Eureka server
 
 server:
-  port: 8761
+  port: ${eureka.server.port}

@@ -1,25 +1,27 @@
 package com.seal.ecommerce.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Getter
 @Setter
 @Entity
 @Table(name = "products")
 public class Product {
     @Id
-    @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    @GeneratedValue
     private Integer id;
 
-    @Column(name = "name")
+    @Column(name = "name" , nullable = false, unique = true)
     private String name;
 
-    @Column(name = "short_description")
+    @Column(name = "short_description", nullable = false)
     private String shortDescription;
 
     @Column(name = "full_description")

@@ -1,9 +1,11 @@
 package com.seal.ecommerce.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Getter
 @Setter
 @Entity
@@ -11,7 +13,7 @@ import lombok.Setter;
 public class Inventory {
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)

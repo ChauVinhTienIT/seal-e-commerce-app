@@ -1,6 +1,6 @@
 CREATE TABLE if not exists "categories" (
                               "id" integer PRIMARY KEY,
-                              "name" varchar,
+                              "name" varchar NOT NULL UNIQUE,
                               "image" varchar,
                               "enabled" boolean
 );
@@ -8,26 +8,26 @@ CREATE TABLE if not exists "categories" (
 CREATE TABLE if not exists "sub_categories" (
                                   "id" integer PRIMARY KEY,
                                   "categories_id" int,
-                                  "name" varchar
+                                  "name" varchar NOT NULL UNIQUE
 );
 
 CREATE TABLE if not exists "products" (
                             "id" integer PRIMARY KEY,
-                            "name" varchar,
-                            "short_description" varchar,
+                            "name" varchar NOT NULL UNIQUE,
+                            "short_description" varchar NOT NULL,
                             "full_description" text,
                             "main_image" varchar,
                             "created_at" timestamp,
                             "updated_at" timestamp,
                             "brand" varchar,
-                            "sub_category_id" int,
+                            "sub_category_id" int NOT NULL,
                             "average_rating" float,
                             "review_count" int
 );
 
 CREATE TABLE if not exists "colors" (
                           "id" integer PRIMARY KEY,
-                          "name" varchar
+                          "name" varchar NOT NULL UNIQUE
 );
 
 CREATE TABLE if not exists "inventories" (
@@ -43,14 +43,14 @@ CREATE TABLE if not exists "inventories" (
 
 CREATE TABLE if not exists "product_images" (
                                   "id" integer PRIMARY KEY,
-                                  "name" varchar,
+                                  "name" varchar NOT NULL,
                                   "product_id" int
 );
 
 CREATE TABLE if not exists "product_details" (
                                    "id" integer PRIMARY KEY,
-                                   "name" varchar,
-                                   "value" varchar,
+                                   "name" varchar NOT NULL,
+                                   "value" varchar NOT NULL,
                                    "product_id" int
 );
 
@@ -66,6 +66,8 @@ ALTER TABLE "product_details" ADD FOREIGN KEY ("product_id") REFERENCES "product
 
 ALTER TABLE "sub_categories" ADD FOREIGN KEY ("categories_id") REFERENCES "categories" ("id");
 
+ALTER TABLE "inventories"
+ADD CONSTRAINT unique_product_color UNIQUE ("product_id", "color_id");
 
 create sequence if not exists category_seq increment by 1;
 create sequence if not exists sub_category_seq increment by 1;
@@ -74,3 +76,5 @@ create sequence if not exists color_seq increment by 1;
 create sequence if not exists inventory_seq increment by 1;
 create sequence if not exists product_image_seq increment by 1;
 create sequence if not exists product_detail_seq increment by 1;
+
+
