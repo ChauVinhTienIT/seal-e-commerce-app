@@ -30,13 +30,13 @@ public class Inventory {
     @Column(name = "list_price")
     private Double listPrice;
 
-    @Column(name = "discount_percent")
+    @Column(name = "discount_percent") // confuse
     private Double discountPercent;
 
-    @Column(name = "cost")
+    @Column(name = "cost") // confuse
     private Double cost;
 
-    @Column(name = "enabled")
+    @Column(name = "enabled") // confuse
     private Integer enabled;
 
 }

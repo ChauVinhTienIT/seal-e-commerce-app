@@ -13,7 +13,7 @@ public enum ErrorCode {
     PRODUCT_ALREADY_EXISTS(1004, "Product already exists", HttpStatus.BAD_REQUEST),
     CATEGORY_ALREADY_EXISTS(1005, "Category already exists", HttpStatus.BAD_REQUEST),
     SUB_CATEGORY_ALREADY_EXISTS(1006, "Sub category already exists", HttpStatus.BAD_REQUEST),
-    ;
+    INVENTORY_NOT_FOUND(1007, "Inventory not found",HttpStatus.NOT_FOUND);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
