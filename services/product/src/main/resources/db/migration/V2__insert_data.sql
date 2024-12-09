@@ -1,3 +1,6 @@
+ALTER TABLE "inventories"
+    ADD CONSTRAINT unique_product_color UNIQUE ("product_id", "color_id");
+
 -- Insert sample data into categories
 INSERT INTO "categories" ("id", "name", "image", "enabled") VALUES
                                                                 (nextval('category_seq'), 'Electronics', 'electronics.jpg', true),

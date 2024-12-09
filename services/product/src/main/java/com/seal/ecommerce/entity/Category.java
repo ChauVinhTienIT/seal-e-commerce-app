@@ -11,7 +11,8 @@ import lombok.Setter;
 public class Category {
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_gen")
+    @SequenceGenerator(name = "category_gen", sequenceName = "category_seq", allocationSize = 1)
     private Integer id;
 
     @Column(name = "name")

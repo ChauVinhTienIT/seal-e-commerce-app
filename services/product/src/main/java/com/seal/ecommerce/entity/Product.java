@@ -2,6 +2,7 @@ package com.seal.ecommerce.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
@@ -15,10 +16,11 @@ import java.time.Instant;
 public class Product {
     @Id
     @Column(name = "id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_gen")
+    @SequenceGenerator(name = "product_gen", sequenceName = "product_seq", allocationSize = 1)
     private Integer id;
 
-    @Column(name = "name" , nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "short_description", nullable = false)
@@ -39,7 +41,7 @@ public class Product {
     @Column(name = "brand")
     private String brand;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
 
@@ -49,7 +51,12 @@ public class Product {
     @Column(name = "review_count")
     private Integer reviewCount;
 
-    @Column
+    @Column(name = "is_available")
+    @ColumnDefault("false")
     private boolean isAvailable;
+
+    @Column(name = "is_active")
+    @ColumnDefault("true")
+    private boolean isActive;
 
 }

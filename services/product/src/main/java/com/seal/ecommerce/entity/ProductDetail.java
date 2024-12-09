@@ -11,7 +11,8 @@ import lombok.Setter;
 public class ProductDetail {
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_detail_gen")
+    @SequenceGenerator(name = "product_detail_gen", sequenceName = "product_detail_seq", allocationSize = 1)
     private Integer id;
 
     @Column(name = "name")
@@ -20,7 +21,7 @@ public class ProductDetail {
     @Column(name = "value")
     private String value;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
     private Product product;
 

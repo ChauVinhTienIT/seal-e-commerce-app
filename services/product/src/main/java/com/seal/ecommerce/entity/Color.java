@@ -11,7 +11,8 @@ import lombok.Setter;
 public class Color {
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "color_gen")
+    @SequenceGenerator(name = "color_gen", sequenceName = "color_seq", allocationSize = 1)
     private Integer id;
 
     @Column(name = "name")
