@@ -49,4 +49,7 @@ public class Product {
     @Column(name = "review_count")
     private Integer reviewCount;
 
+    @Column
+    private boolean isAvailable;
+
 }

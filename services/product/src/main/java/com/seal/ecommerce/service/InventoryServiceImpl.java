@@ -41,6 +41,8 @@ public class InventoryServiceImpl implements InventoryService {
         Inventory inventory = inventoryMapper.toInventoryFromCreationRequest(request);
         inventory.setProduct(product);
         inventory.setColor(color);
+        product.setAvailable(true);
+        productRepository.save(product);
         return inventoryMapper.toInventoryCreationResponse(inventoryRepository.save(inventory));
     }
 
