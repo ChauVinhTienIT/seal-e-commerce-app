@@ -1,14 +1,16 @@
 package com.seal.ecommerce.dto.request;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-public class ProductCreationRequest {
+public class ProductUpdateRequest {
     @NotNull(message = "Product name is required")
     private String name;
 
@@ -26,4 +28,13 @@ public class ProductCreationRequest {
 
     @NotNull(message = "Product sub category is required")
     private Integer subCategory;
+
+    @NotNull(message = "Product enabled is required")
+    private Integer enabled;
+
+    @NotNull(message = "Product is available is required")
+    private boolean isAvailable;
+
+    @NotNull(message = "Product is active is required")
+    private boolean isActive;
 }
