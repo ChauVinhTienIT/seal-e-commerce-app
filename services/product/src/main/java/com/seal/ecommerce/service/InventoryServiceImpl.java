@@ -85,7 +85,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .color(inventory.getColor())
                 .availableQuantity(inventory.getAvailableQuantity())
                 .listPrice(inventory.getListPrice())
-                .discountPercent(inventory.getDiscountPercent())
+                .discount(inventory.getDiscountPercent())
                 .cost(inventory.getCost())
                 .enabled(inventory.getEnabled())
                 .build();
@@ -108,7 +108,7 @@ public class InventoryServiceImpl implements InventoryService {
                         .color(inventory.getColor())
                         .availableQuantity(inventory.getAvailableQuantity())
                         .listPrice(inventory.getListPrice())
-                        .discountPercent(inventory.getDiscountPercent())
+                        .discount(inventory.getDiscountPercent())
                         .cost(inventory.getCost())
                         .enabled(inventory.getEnabled())
                         .build())

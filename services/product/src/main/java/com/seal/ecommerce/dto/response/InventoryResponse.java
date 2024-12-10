@@ -20,7 +20,7 @@ public class InventoryResponse {
     private Color color;
     private Integer availableQuantity;
     private Double listPrice;
-    private Double discountPercent;
+    private Double discount;
     private Double cost;
     private Integer enabled;
 }
