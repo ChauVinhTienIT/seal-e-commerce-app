@@ -9,19 +9,22 @@ import com.seal.ecommerce.exception.AppException;
 import com.seal.ecommerce.exception.ErrorCode;
 import com.seal.ecommerce.mapper.ProductMapper;
 import com.seal.ecommerce.repository.InventoryRepository;
+import com.seal.ecommerce.repository.ProductImageRepository;
 import com.seal.ecommerce.repository.ProductRepository;
 import lombok.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ProductServiceImp implements ProductService{
+public class ProductServiceImpl implements ProductService{
     private final ProductRepository productRepository;
-    private final InventoryRepository inventoryRepository;
+    private final ProductImageRepository productImageRepository;
+    private final FilesStorageService filesStorageService;
     private final ProductMapper productMapper;
 
     @Override
@@ -29,9 +32,6 @@ public class ProductServiceImp implements ProductService{
         Product product = productMapper.creationRequestToEntity(productCreationRequest);
         try {
             product = productRepository.save(product);
-            Inventory inventory = new Inventory();
-            inventory.setProduct(product);
-            inventoryRepository.save(inventory);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.PRODUCT_ALREADY_EXISTS);
         }
@@ -75,6 +75,18 @@ public class ProductServiceImp implements ProductService{
         return productRepository.findById(productId)
                 .map(productMapper::toResponse)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    @Override
+    public ProductResponse uploadProductImage(MultipartFile file, Integer productId) {
+        return productRepository.findById(productId)
+                .map(product -> {
+                    String fileName = filesStorageService.save(file);
+                    product.setMainImage(fileName);
+                    productRepository.save(product);
+                    return productMapper.toResponse(product);
+                })
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
     }
 
     @Override

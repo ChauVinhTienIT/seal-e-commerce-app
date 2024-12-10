@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -81,6 +82,18 @@ public class ProductController {
                 .code(HttpStatus.OK.value())
                 .message("Product disabled successfully")
                 .result(productService.disableProduct(productId))
+                .build();
+    }
+
+    @PostMapping(path = "/{product-id}/image", consumes = "multipart/form-data")
+    public ApiResponse<ProductResponse> uploadProductImage(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable("product-id") Integer productId
+    ) {
+        return ApiResponse.<ProductResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Product image uploaded successfully")
+                .result(productService.uploadProductImage(file, productId))
                 .build();
     }
 }

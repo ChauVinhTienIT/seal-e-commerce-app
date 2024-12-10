@@ -5,6 +5,7 @@ import com.seal.ecommerce.dto.request.ProductUpdateRequest;
 import com.seal.ecommerce.dto.response.ProductResponse;
 import com.seal.ecommerce.entity.Product;
 import com.seal.ecommerce.entity.SubCategory;
+import lombok.Value;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
