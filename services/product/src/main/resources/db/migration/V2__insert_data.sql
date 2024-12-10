@@ -5,6 +5,7 @@ ALTER TABLE "inventories"
 INSERT INTO "categories" ("id", "name", "image", "enabled") VALUES
                                                                 (nextval('category_seq'), 'Electronics', 'electronics.jpg', true),
                                                                 (nextval('category_seq'), 'Home Appliances', 'home_appliances.jpg', true);
+
 -- Insert sample data into sub_categories
 INSERT INTO "sub_categories" ("id", "categories_id", "name") VALUES
                                                                  (nextval('sub_category_seq'), 1, 'Phones'),
