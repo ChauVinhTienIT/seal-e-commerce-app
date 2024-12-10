@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
-
 @Getter
 @Setter
 @Entity
@@ -25,4 +23,5 @@ public class Category {
 
     @Column(name = "enabled")
     private Boolean enabled;
+
 }
