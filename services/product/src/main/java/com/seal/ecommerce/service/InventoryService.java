@@ -1,5 +1,6 @@
 package com.seal.ecommerce.service;
 
+import com.seal.ecommerce.dto.PageResponse;
 import com.seal.ecommerce.dto.request.InventoryCreationRequest;
 import com.seal.ecommerce.dto.request.InventoryUpdateRequest;
 import com.seal.ecommerce.dto.response.InventoryCreationResponse;
@@ -15,4 +16,6 @@ public interface InventoryService {
     InventoryResponse getInventory(Integer inventoryId);
 
     List<InventoryResponse> getAllByProduct(Integer productId);
+
+    PageResponse<InventoryResponse> getAllToPage(long page, long size);
 }

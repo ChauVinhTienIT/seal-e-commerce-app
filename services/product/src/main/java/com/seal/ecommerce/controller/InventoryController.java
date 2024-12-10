@@ -1,6 +1,7 @@
 package com.seal.ecommerce.controller;
 
 import com.seal.ecommerce.dto.ApiResponse;
+import com.seal.ecommerce.dto.PageResponse;
 import com.seal.ecommerce.dto.request.InventoryCreationRequest;
 import com.seal.ecommerce.dto.request.InventoryUpdateRequest;
 import com.seal.ecommerce.dto.response.InventoryCreationResponse;
@@ -41,7 +42,7 @@ public class InventoryController {
     {
         return ApiResponse.<InventoryUpdateResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Inventory create successfully")
+                .message("Inventory update successfully")
                 .result(inventoryService.updateInventory(inventoryId, request))
                 .build();
     }
@@ -52,7 +53,7 @@ public class InventoryController {
     {
         return ApiResponse.<InventoryResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Inventory create successfully")
+                .message("Inventory get successfully")
                 .result(inventoryService.getInventory(inventoryId))
                 .build();
     }
@@ -63,8 +64,19 @@ public class InventoryController {
     {
         return ApiResponse.<List<InventoryResponse>>builder()
                 .code(HttpStatus.OK.value())
-                .message("Inventory create successfully")
+                .message("Inventory get all by product successfully")
                 .result(inventoryService.getAllByProduct(productId))
+                .build();
+    }
+    @GetMapping
+    ApiResponse<PageResponse<InventoryResponse>> getAll(
+            @RequestParam(value = "page", required = false, defaultValue = "1") long page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") long size
+    ){
+        return ApiResponse.<PageResponse<InventoryResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Inventory get all successfully")
+                .result(inventoryService.getAllToPage(page, size))
                 .build();
     }
 }
