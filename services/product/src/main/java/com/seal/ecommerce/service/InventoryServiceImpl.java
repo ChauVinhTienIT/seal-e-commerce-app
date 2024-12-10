@@ -1,5 +1,6 @@
 package com.seal.ecommerce.service;
 
+import com.seal.ecommerce.dto.PageResponse;
 import com.seal.ecommerce.dto.request.InventoryCreationRequest;
 import com.seal.ecommerce.dto.request.InventoryUpdateRequest;
 import com.seal.ecommerce.dto.response.InventoryCreationResponse;
@@ -17,6 +18,9 @@ import com.seal.ecommerce.repository.ProductRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -113,6 +117,19 @@ public class InventoryServiceImpl implements InventoryService {
                         .enabled(inventory.getEnabled())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageResponse<InventoryResponse> getAllToPage(long page, long size) {
+        Sort sort = Sort.by("id").ascending();
+        Pageable pageable = PageRequest.of((int) (page - 1), (int) size, sort);
+        var pageData = inventoryRepository.findAll(pageable);
+        return PageResponse.<InventoryResponse>builder()
+                .currentPage(page)
+                .totalElement(pageData.getTotalElements())
+                .totalPages(pageData.getTotalPages())
+                .data(pageData.getContent().stream().map(inventoryMapper::toInventoryResponse).toList())
+                .build();
     }
 
 }
