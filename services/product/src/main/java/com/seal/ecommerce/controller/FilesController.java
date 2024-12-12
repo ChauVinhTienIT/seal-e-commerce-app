@@ -1,22 +1,18 @@
 package com.seal.ecommerce.controller;
 
-import com.seal.ecommerce.dto.ApiResponse;
-import com.seal.ecommerce.entity.ProductImage;
 import com.seal.ecommerce.service.FilesStorageService;
+import jakarta.xml.bind.SchemaOutputResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/files")
@@ -30,7 +26,7 @@ public class FilesController {
     ) {
         String message = "";
         try {
-            storageService.save(file);
+            storageService.store(file, "upload-dir");
 
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(message);
@@ -41,10 +37,17 @@ public class FilesController {
         }
     }
 
-    @GetMapping("/files/{filename:.+}")
+    @GetMapping
     @ResponseBody
-    public ResponseEntity<Resource> getFile(@PathVariable String filename) throws IOException {
-        Resource file = storageService.load(filename);
+    public ResponseEntity<Resource> getFile(
+            @RequestParam("fileUri") String fileUri
+    ) throws IOException {
+        System.out.println(fileUri);
+        String decodedFileUri = java.net.URLDecoder.decode(fileUri, StandardCharsets.UTF_8);
+        System.out.println(decodedFileUri);
+        Resource file = storageService.loadAsResource(decodedFileUri);
+
+        // Decode the received file URI
         String contentType = Files.probeContentType(file.getFile().toPath());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, contentType)

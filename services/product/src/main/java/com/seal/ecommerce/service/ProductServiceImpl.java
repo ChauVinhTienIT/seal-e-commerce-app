@@ -3,19 +3,19 @@ package com.seal.ecommerce.service;
 import com.seal.ecommerce.dto.request.ProductCreationRequest;
 import com.seal.ecommerce.dto.request.ProductUpdateRequest;
 import com.seal.ecommerce.dto.response.ProductResponse;
-import com.seal.ecommerce.entity.Inventory;
 import com.seal.ecommerce.entity.Product;
 import com.seal.ecommerce.exception.AppException;
 import com.seal.ecommerce.exception.ErrorCode;
 import com.seal.ecommerce.mapper.ProductMapper;
-import com.seal.ecommerce.repository.InventoryRepository;
 import com.seal.ecommerce.repository.ProductImageRepository;
 import com.seal.ecommerce.repository.ProductRepository;
 import lombok.*;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +26,8 @@ public class ProductServiceImpl implements ProductService{
     private final ProductImageRepository productImageRepository;
     private final FilesStorageService filesStorageService;
     private final ProductMapper productMapper;
+    private final List<String> allowedTypes = Arrays.asList("image/png", "image/jpeg", "image/jpg");
+    private final String imageDir = "product";
 
     @Override
     public ProductResponse createProduct(ProductCreationRequest productCreationRequest) {
@@ -79,11 +81,41 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public ProductResponse uploadProductImage(MultipartFile file, Integer productId) {
+        if(!isImage(file)){
+            throw new AppException(ErrorCode.INVALID_FILE_TYPE);
+        }
+
+        String productDir = imageDir + "/" + productId;
+
         return productRepository.findById(productId)
                 .map(product -> {
-                    String fileName = filesStorageService.save(file);
+                    String fileName = filesStorageService.store(file, productDir);
                     product.setMainImage(fileName);
                     productRepository.save(product);
+                    return productMapper.toResponse(product);
+                })
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+    }
+
+    @Override
+    public ProductResponse updateProductImage(MultipartFile file, Integer productId) {
+        if(!isImage(file)){
+            throw new AppException(ErrorCode.INVALID_FILE_TYPE);
+        }
+
+        String productDir = imageDir + "/" + productId;
+
+        return productRepository.findById(productId)
+                .map(product -> {
+                    String oldFileName = product.getMainImage();
+                    String fileName = filesStorageService.store(file, productDir);
+                    product.setMainImage(fileName);
+
+                    productRepository.save(product);
+
+                    String fileUri = String.format("%s/%d/%s", imageDir, product.getId(), oldFileName);
+                    filesStorageService.delete(fileUri);
+
                     return productMapper.toResponse(product);
                 })
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -95,6 +127,15 @@ public class ProductServiceImpl implements ProductService{
                 .findAll()
                 .stream().map(productMapper::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Resource getMainImage(Integer productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        String fileName = product.getMainImage();
+        String fileUri = String.format("%s/%d/%s", imageDir, product.getId(), fileName);
+        return filesStorageService.loadAsResource(fileUri);
     }
 
     private void mergeProduct(Product product, Product request) {
@@ -116,5 +157,9 @@ public class ProductServiceImpl implements ProductService{
         if (request.getSubCategory() != null) {
             product.setSubCategory(request.getSubCategory());
         }
+    }
+
+    private boolean isImage(MultipartFile file) {
+        return allowedTypes.contains(file.getContentType());
     }
 }

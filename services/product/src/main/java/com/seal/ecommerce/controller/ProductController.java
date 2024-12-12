@@ -7,10 +7,16 @@ import com.seal.ecommerce.dto.response.ProductResponse;
 import com.seal.ecommerce.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
 @RestController
@@ -38,6 +44,19 @@ public class ProductController {
                 .message("Product retrieved successfully")
                 .result(productService.getProduct(productId))
                 .build();
+    }
+
+    @GetMapping("/main-image/{product-id}")
+    @ResponseBody
+    public ResponseEntity<Resource> getProductMainImage(
+            @PathVariable("product-id") Integer productId
+    ) throws IOException {
+        Resource file = productService.getMainImage(productId);
+        // Decode the received file URI
+        String contentType = Files.probeContentType(file.getFile().toPath());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
+                .body(file);
     }
 
     @PostMapping
@@ -94,6 +113,18 @@ public class ProductController {
                 .code(HttpStatus.OK.value())
                 .message("Product image uploaded successfully")
                 .result(productService.uploadProductImage(file, productId))
+                .build();
+    }
+
+    @PutMapping(path = "/{product-id}/image", consumes = "multipart/form-data")
+    public ApiResponse<ProductResponse> updateProductImage(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable("product-id") Integer productId
+    ) {
+        return ApiResponse.<ProductResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Product image uploaded successfully")
+                .result(productService.updateProductImage(file, productId))
                 .build();
     }
 }
