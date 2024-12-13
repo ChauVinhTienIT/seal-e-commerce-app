@@ -152,8 +152,9 @@ public class InventoryServiceImpl implements InventoryService {
         }
         return responses;
     }
+
     @Transactional
-    private InventoryPurchaseResponse purchaseSingleInventory(InventoryPurchaseRequest purchaseRequest, Map<Integer, Inventory> inventoryMap){
+    protected InventoryPurchaseResponse purchaseSingleInventory(InventoryPurchaseRequest purchaseRequest, Map<Integer, Inventory> inventoryMap){
         Inventory inventory = inventoryMap.get(purchaseRequest.getInventoryId());
         if (inventory == null) {
             throw new IllegalArgumentException("Inventory not found for ID: " + purchaseRequest.getInventoryId());
