@@ -4,6 +4,7 @@ import com.seal.ecommerce.dto.request.ProductCreationRequest;
 import com.seal.ecommerce.dto.request.ProductUpdateRequest;
 import com.seal.ecommerce.dto.response.ProductResponse;
 import com.seal.ecommerce.entity.Product;
+import com.seal.ecommerce.entity.ProductImage;
 import com.seal.ecommerce.exception.AppException;
 import com.seal.ecommerce.exception.ErrorCode;
 import com.seal.ecommerce.mapper.ProductMapper;
@@ -13,10 +14,13 @@ import lombok.*;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,13 +78,14 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public ProductResponse getProduct(Integer productId) {
+        Optional<Product> product = productRepository.findById(productId);
         return productRepository.findById(productId)
                 .map(productMapper::toResponse)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
     @Override
-    public ProductResponse uploadProductImage(MultipartFile file, Integer productId) {
+    public ProductResponse uploadProductMainImage(MultipartFile file, Integer productId) {
         if(!isImage(file)){
             throw new AppException(ErrorCode.INVALID_FILE_TYPE);
         }
@@ -98,7 +103,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ProductResponse updateProductImage(MultipartFile file, Integer productId) {
+    public ProductResponse updateProductMainImage(MultipartFile file, Integer productId) {
         if(!isImage(file)){
             throw new AppException(ErrorCode.INVALID_FILE_TYPE);
         }
@@ -134,6 +139,59 @@ public class ProductServiceImpl implements ProductService{
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         String fileName = product.getMainImage();
+        String fileUri = String.format("%s/%d/%s", imageDir, product.getId(), fileName);
+        return filesStorageService.loadAsResource(fileUri);
+    }
+
+    @Override
+    @Transactional
+    public ProductResponse uploadProductImages(List<MultipartFile> files, Integer productId) {
+        String productDir = imageDir + "/" + productId;
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        Set<ProductImage> productImages = files.stream()
+                .filter(this::isImage)
+                .map(file -> {
+                    String fileName = filesStorageService.store(file, productDir);
+                    return ProductImage.builder()
+                            .product(product)
+                            .name(fileName)
+                            .build();
+                })
+                .collect(Collectors.toSet());
+        productImageRepository.saveAll(productImages);
+        return productMapper.toResponse(product);
+    }
+
+    @Override
+    @Transactional
+    public List<String> deleteProductImages(Integer productId, List<Integer> imageIds) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        List<ProductImage> productImages = productImageRepository.findAllById(imageIds);
+
+        List<String> fileNames = productImages.stream()
+                .map(ProductImage::getName)
+                .collect(Collectors.toList());
+
+        fileNames.forEach(fileName -> {
+            String fileUri = String.format("%s/%d/%s", imageDir, product.getId(), fileName);
+            filesStorageService.delete(fileUri);
+        });
+
+        productImageRepository.deleteAll(productImages);
+        return fileNames;
+    }
+
+    @Override
+    public Resource getProductImage(Integer productId, Integer imageId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        ProductImage productImage = productImageRepository.findById(imageId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_IMAGE_NOT_FOUND));
+        String fileName = productImage.getName();
         String fileUri = String.format("%s/%d/%s", imageDir, product.getId(), fileName);
         return filesStorageService.loadAsResource(fileUri);
     }

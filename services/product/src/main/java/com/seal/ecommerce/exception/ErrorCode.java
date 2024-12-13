@@ -16,7 +16,8 @@ public enum ErrorCode {
     FILE_STORAGE_EXCEPTION(1008,"Could not initialize storage",HttpStatus.INTERNAL_SERVER_ERROR),
     STORAGE_FILE_NOT_FOUND(1009,"Storage file not found", HttpStatus.NOT_FOUND),
     FILE_ALREADY_EXISTS(1010, "File already exist", HttpStatus.NOT_FOUND),
-    INVALID_FILE_TYPE(1011, "Invalid File Type", HttpStatus.BAD_REQUEST),;
+    INVALID_FILE_TYPE(1011, "Invalid File Type", HttpStatus.BAD_REQUEST),
+    PRODUCT_IMAGE_NOT_FOUND(1012, "Product image not found", HttpStatus.NOT_FOUND),;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

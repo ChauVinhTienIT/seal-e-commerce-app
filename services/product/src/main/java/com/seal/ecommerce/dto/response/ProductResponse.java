@@ -2,9 +2,11 @@ package com.seal.ecommerce.dto.response;
 
 import com.seal.ecommerce.entity.SubCategory;
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,4 +23,6 @@ public class ProductResponse {
     private Integer subCategory;
     private Double averageRating;
     private Integer reviewCount;
+    private List<Integer> imageIds;
+    private List<String> images;
 }

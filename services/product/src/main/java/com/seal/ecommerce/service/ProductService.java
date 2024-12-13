@@ -14,10 +14,16 @@ public interface ProductService {
     ProductResponse updateProduct(ProductUpdateRequest productCreationRequest, Integer productId);
     ProductResponse disableProduct(Integer productId);
     ProductResponse enableProduct(Integer productId);
+
     ProductResponse getProduct(Integer productId);
-    ProductResponse uploadProductImage(MultipartFile file, Integer productId);
     List<ProductResponse> getAllProducts();
+
+    ProductResponse uploadProductMainImage(MultipartFile file, Integer productId);
+    ProductResponse updateProductMainImage(MultipartFile file, Integer productId);
     Resource getMainImage(Integer productId);
 
-    ProductResponse updateProductImage(MultipartFile file, Integer productId);
+    ProductResponse uploadProductImages(List<MultipartFile> files, Integer productId);
+    List<String> deleteProductImages (Integer productId, List<Integer> imageIds);
+
+    Resource getProductImage(Integer productId, Integer imageId);
 }

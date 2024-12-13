@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -44,19 +43,6 @@ public class ProductController {
                 .message("Product retrieved successfully")
                 .result(productService.getProduct(productId))
                 .build();
-    }
-
-    @GetMapping("/main-image/{product-id}")
-    @ResponseBody
-    public ResponseEntity<Resource> getProductMainImage(
-            @PathVariable("product-id") Integer productId
-    ) throws IOException {
-        Resource file = productService.getMainImage(productId);
-        // Decode the received file URI
-        String contentType = Files.probeContentType(file.getFile().toPath());
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, contentType)
-                .body(file);
     }
 
     @PostMapping
@@ -104,27 +90,78 @@ public class ProductController {
                 .build();
     }
 
-    @PostMapping(path = "/{product-id}/image", consumes = "multipart/form-data")
-    public ApiResponse<ProductResponse> uploadProductImage(
+    @GetMapping("/main-image/{product-id}")
+    @ResponseBody
+    public ResponseEntity<Resource> getProductMainImage(
+            @PathVariable("product-id") Integer productId
+    ) throws IOException {
+        Resource file = productService.getMainImage(productId);
+        // Decode the received file URI
+        String contentType = Files.probeContentType(file.getFile().toPath());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
+                .body(file);
+    }
+
+    @PostMapping(path = "main-image/{product-id}", consumes = "multipart/form-data")
+    public ApiResponse<ProductResponse> uploadProductMainImage(
             @RequestParam("file") MultipartFile file,
             @PathVariable("product-id") Integer productId
     ) {
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Product image uploaded successfully")
-                .result(productService.uploadProductImage(file, productId))
+                .result(productService.uploadProductMainImage(file, productId))
                 .build();
     }
 
-    @PutMapping(path = "/{product-id}/image", consumes = "multipart/form-data")
-    public ApiResponse<ProductResponse> updateProductImage(
+    @PutMapping(path = "main-image/{product-id}", consumes = "multipart/form-data")
+    public ApiResponse<ProductResponse> updateProductMainImage(
             @RequestParam("file") MultipartFile file,
             @PathVariable("product-id") Integer productId
     ) {
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Product image uploaded successfully")
-                .result(productService.updateProductImage(file, productId))
+                .result(productService.updateProductMainImage(file, productId))
                 .build();
     }
+
+    @PostMapping(path = "images/{product-id}", consumes = "multipart/form-data")
+    public ApiResponse<ProductResponse> uploadProductImages(
+            @RequestParam("files") List<MultipartFile> files,
+            @PathVariable("product-id") Integer productId
+    ) {
+        return ApiResponse.<ProductResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Product images uploaded successfully")
+                .result(productService.uploadProductImages(files, productId))
+                .build();
+    }
+
+    @GetMapping(path = "images/{product-id}/{image-id}")
+    public ResponseEntity<Resource> getProductImage(
+            @PathVariable("product-id") Integer productId,
+            @PathVariable("image-id") Integer imageId
+    ) throws IOException {
+        Resource file = productService.getProductImage(productId, imageId);
+        // Decode the received file URI
+        String contentType = Files.probeContentType(file.getFile().toPath());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
+                .body(file);
+    }
+
+    @DeleteMapping(path = "images/{product-id}/{image-id}")
+    public ApiResponse<List<String>> deleteProductImages(
+            @PathVariable("product-id") Integer productId,
+            @PathVariable("image-id") List<Integer> imageIds
+    ) {
+        return ApiResponse.<List<String>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Product images deleted successfully")
+                .result(productService.deleteProductImages(productId, imageIds))
+                .build();
+    }
+
 }
