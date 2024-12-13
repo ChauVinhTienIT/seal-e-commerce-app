@@ -1,5 +1,6 @@
 package com.seal.ecommerce.service;
 
+import com.seal.ecommerce.dto.PageResponse;
 import com.seal.ecommerce.dto.request.ProductCreationRequest;
 import com.seal.ecommerce.dto.request.ProductUpdateRequest;
 import com.seal.ecommerce.dto.response.ProductResponse;
@@ -13,6 +14,10 @@ import com.seal.ecommerce.repository.ProductRepository;
 import lombok.*;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -135,6 +140,27 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public PageResponse<ProductResponse> getAllProductsToPage(long page, long size, String sortBy, boolean asc) {
+        Sort sort = Sort.by(sortBy);
+        if (!asc) {
+            sort = sort.descending();
+        }
+
+        System.out.println("Get Page: " + page);
+
+        Pageable pageable = PageRequest.of((int) (page - 1), (int) size, sort);
+
+        Page<Product> productPage = productRepository.findAll(pageable);
+        return PageResponse.<ProductResponse>builder()
+                .currentPage(page)
+                .totalElement(productPage.getTotalElements())
+                .totalPages(productPage.getTotalPages())
+                .data(productPage.stream().map(productMapper::toResponse).collect(Collectors.toList()))
+                .build();
+    }
+
+
+    @Override
     public Resource getMainImage(Integer productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -194,6 +220,14 @@ public class ProductServiceImpl implements ProductService{
         String fileName = productImage.getName();
         String fileUri = String.format("%s/%d/%s", imageDir, product.getId(), fileName);
         return filesStorageService.loadAsResource(fileUri);
+    }
+
+    @Override
+    public List<ProductResponse> getAllProductsByCategory(Integer categoryId) {
+        return productRepository.findAllBySubCategoryId(categoryId)
+                .stream()
+                .map(productMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     private void mergeProduct(Product product, Product request) {

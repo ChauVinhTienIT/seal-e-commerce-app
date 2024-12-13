@@ -1,6 +1,7 @@
 package com.seal.ecommerce.service;
 
 
+import com.seal.ecommerce.dto.PageResponse;
 import com.seal.ecommerce.dto.request.ProductCreationRequest;
 import com.seal.ecommerce.dto.request.ProductUpdateRequest;
 import com.seal.ecommerce.dto.response.ProductResponse;
@@ -17,6 +18,7 @@ public interface ProductService {
 
     ProductResponse getProduct(Integer productId);
     List<ProductResponse> getAllProducts();
+    PageResponse<ProductResponse> getAllProductsToPage(long page, long size, String sortBy, boolean asc);
 
     ProductResponse uploadProductMainImage(MultipartFile file, Integer productId);
     ProductResponse updateProductMainImage(MultipartFile file, Integer productId);
@@ -26,4 +28,6 @@ public interface ProductService {
     List<String> deleteProductImages (Integer productId, List<Integer> imageIds);
 
     Resource getProductImage(Integer productId, Integer imageId);
+
+    List<ProductResponse> getAllProductsByCategory(Integer categoryId);
 }
