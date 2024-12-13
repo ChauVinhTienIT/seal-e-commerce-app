@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -59,4 +60,6 @@ public class Product {
     @ColumnDefault("true")
     private boolean isActive;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProductImage> images;
 }

@@ -10,3 +10,5 @@ spring:
   cloud:
     config:
       override-system-properties: false
+server:
+  address: localhost
