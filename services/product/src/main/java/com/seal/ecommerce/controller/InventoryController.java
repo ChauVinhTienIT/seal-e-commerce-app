@@ -3,8 +3,10 @@ package com.seal.ecommerce.controller;
 import com.seal.ecommerce.dto.ApiResponse;
 import com.seal.ecommerce.dto.PageResponse;
 import com.seal.ecommerce.dto.request.InventoryCreationRequest;
+import com.seal.ecommerce.dto.request.InventoryPurchaseRequest;
 import com.seal.ecommerce.dto.request.InventoryUpdateRequest;
 import com.seal.ecommerce.dto.response.InventoryCreationResponse;
+import com.seal.ecommerce.dto.response.InventoryPurchaseResponse;
 import com.seal.ecommerce.dto.response.InventoryResponse;
 import com.seal.ecommerce.dto.response.InventoryUpdateResponse;
 import com.seal.ecommerce.service.InventoryService;
@@ -20,9 +22,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/inventory")
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PUBLIC, makeFinal = true)
 public class InventoryController {
-    InventoryService inventoryService;
+    private InventoryService inventoryService;
 
     @PostMapping
     ApiResponse<InventoryCreationResponse> createInventory(
@@ -79,4 +81,15 @@ public class InventoryController {
                 .result(inventoryService.getAllToPage(page, size))
                 .build();
     }
+    @PostMapping("/purchase")
+    ApiResponse<List<InventoryPurchaseResponse>> purchase(
+            @RequestBody List<InventoryPurchaseRequest> request
+    ){
+        return ApiResponse.<List<InventoryPurchaseResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Inventory purchase successfully")
+                .result(inventoryService.purchase(request))
+                .build();
+    }
+
 }

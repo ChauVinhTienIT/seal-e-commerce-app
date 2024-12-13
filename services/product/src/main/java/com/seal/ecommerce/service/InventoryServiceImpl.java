@@ -2,8 +2,10 @@ package com.seal.ecommerce.service;
 
 import com.seal.ecommerce.dto.PageResponse;
 import com.seal.ecommerce.dto.request.InventoryCreationRequest;
+import com.seal.ecommerce.dto.request.InventoryPurchaseRequest;
 import com.seal.ecommerce.dto.request.InventoryUpdateRequest;
 import com.seal.ecommerce.dto.response.InventoryCreationResponse;
+import com.seal.ecommerce.dto.response.InventoryPurchaseResponse;
 import com.seal.ecommerce.dto.response.InventoryResponse;
 import com.seal.ecommerce.dto.response.InventoryUpdateResponse;
 import com.seal.ecommerce.entity.Color;
@@ -22,8 +24,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -132,4 +137,35 @@ public class InventoryServiceImpl implements InventoryService {
                 .build();
     }
 
+    @Override
+    public List<InventoryPurchaseResponse> purchase(List<InventoryPurchaseRequest> request) {
+        List<InventoryPurchaseResponse> responses = new ArrayList<>();
+        List<Integer> inventoryIds = request.stream()
+                .map(InventoryPurchaseRequest::getInventoryId)
+                .toList();
+        List<Inventory> inventories = inventoryRepository.findAllById(inventoryIds);
+        Map<Integer, Inventory> inventoryMap = inventories.stream()
+                .collect(Collectors.toMap(Inventory::getId, inventory -> inventory));
+
+        for (InventoryPurchaseRequest purchaseRequest : request) {
+            responses.add(purchaseSingleInventory(purchaseRequest, inventoryMap));
+        }
+        return responses;
+    }
+    @Transactional
+    private InventoryPurchaseResponse purchaseSingleInventory(InventoryPurchaseRequest purchaseRequest, Map<Integer, Inventory> inventoryMap){
+        Inventory inventory = inventoryMap.get(purchaseRequest.getInventoryId());
+        if (inventory == null) {
+            throw new IllegalArgumentException("Inventory not found for ID: " + purchaseRequest.getInventoryId());
+        }
+        if (inventory.getAvailableQuantity() < purchaseRequest.getQuantity()) {
+            throw new IllegalArgumentException("Insufficient stock for Inventory ID: " + purchaseRequest.getInventoryId());
+        }
+        inventory.setAvailableQuantity(inventory.getAvailableQuantity() - purchaseRequest.getQuantity());
+        inventoryRepository.save(inventory);
+        return InventoryPurchaseResponse.builder()
+                .inventoryId(inventory.getId())
+                .quantity(purchaseRequest.getQuantity())
+                .build();
+    }
 }
