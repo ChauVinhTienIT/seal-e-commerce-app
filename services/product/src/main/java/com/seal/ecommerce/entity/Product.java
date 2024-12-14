@@ -1,5 +1,7 @@
 package com.seal.ecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -14,6 +16,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "products")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Product {
     @Id
     @Column(name = "id")
@@ -61,5 +64,6 @@ public class Product {
     private boolean isActive;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<ProductImage> images;
 }
