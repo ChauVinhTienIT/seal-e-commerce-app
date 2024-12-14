@@ -11,4 +11,6 @@ import lombok.experimental.FieldDefaults;
 public class InventoryPurchaseResponse {
     Integer inventoryId;
     Integer quantity;
+    boolean isSuccess;
+    String message;
 }

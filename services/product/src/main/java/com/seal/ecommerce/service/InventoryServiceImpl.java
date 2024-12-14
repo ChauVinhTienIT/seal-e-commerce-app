@@ -148,7 +148,20 @@ public class InventoryServiceImpl implements InventoryService {
                 .collect(Collectors.toMap(Inventory::getId, inventory -> inventory));
 
         for (InventoryPurchaseRequest purchaseRequest : request) {
-            responses.add(purchaseSingleInventory(purchaseRequest, inventoryMap));
+            try{
+                var purchaseSuccessResponse = purchaseSingleInventory(purchaseRequest, inventoryMap);
+                responses.add(purchaseSuccessResponse);
+            }
+            catch (IllegalArgumentException exception){
+                responses.add(InventoryPurchaseResponse.builder()
+                        .inventoryId(purchaseRequest.getInventoryId())
+                        .isSuccess(false)
+                        .quantity(0)
+                        .message("Ordering failed!")
+                        .build()
+                );
+            }
+
         }
         return responses;
     }
@@ -166,7 +179,11 @@ public class InventoryServiceImpl implements InventoryService {
         inventoryRepository.save(inventory);
         return InventoryPurchaseResponse.builder()
                 .inventoryId(inventory.getId())
+                .isSuccess(true)
                 .quantity(purchaseRequest.getQuantity())
+                .message(inventory.getProduct().getName() + " "
+                        + inventory.getColor().getName() + " "
+                        + "is ordered successfully!")
                 .build();
     }
 }
