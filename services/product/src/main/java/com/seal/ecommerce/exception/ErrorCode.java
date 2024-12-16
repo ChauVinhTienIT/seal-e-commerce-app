@@ -17,7 +17,9 @@ public enum ErrorCode {
     STORAGE_FILE_NOT_FOUND(1009,"Storage file not found", HttpStatus.NOT_FOUND),
     FILE_ALREADY_EXISTS(1010, "File already exist", HttpStatus.NOT_FOUND),
     INVALID_FILE_TYPE(1011, "Invalid File Type", HttpStatus.BAD_REQUEST),
-    PRODUCT_IMAGE_NOT_FOUND(1012, "Product image not found", HttpStatus.NOT_FOUND),;
+    PRODUCT_IMAGE_NOT_FOUND(1012, "Product image not found", HttpStatus.NOT_FOUND),
+    PRODUCT_DETAIL_ALREADY_EXISTS(1013, "Product detail already exists", HttpStatus.CONFLICT),
+    PRODUCT_DETAIL_NOT_FOUND(1014, "Product detail not found", HttpStatus.NOT_FOUND);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
