@@ -55,3 +55,4 @@ INSERT INTO "product_details" ("id", "name", "value", "product_id") VALUES
                                                                         (nextval('product_detail_seq'), 'Processor', 'Snapdragon 8 Gen 2', 2),
                                                                         (nextval('product_detail_seq'), 'Weight', '2.7 lbs', 3),
                                                                         (nextval('product_detail_seq'), 'Storage', '512 GB SSD', 3);
+

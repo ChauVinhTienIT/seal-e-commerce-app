@@ -17,7 +17,7 @@ public class Inventory {
     @SequenceGenerator(name = "inventory_gen", sequenceName = "inventory_seq", allocationSize = 1)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 

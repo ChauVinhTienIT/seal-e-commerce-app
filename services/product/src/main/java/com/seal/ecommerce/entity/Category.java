@@ -20,8 +20,4 @@ public class Category {
 
     @Column(name = "image")
     private String image;
-
-    @Column(name = "enabled")
-    private Boolean enabled;
-
 }

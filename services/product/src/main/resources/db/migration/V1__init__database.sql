@@ -104,3 +104,4 @@ ALTER TABLE product_images
 
 ALTER TABLE sub_categories
     ADD CONSTRAINT FK_SUB_CATEGORIES_ON_CATEGORIES FOREIGN KEY (categories_id) REFERENCES categories (id);
+
