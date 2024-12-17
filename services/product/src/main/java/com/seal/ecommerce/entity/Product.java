@@ -63,7 +63,7 @@ public class Product {
     @ColumnDefault("true")
     private boolean isActive;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true) // confuse
     @JsonManagedReference
     private Set<ProductImage> images;
 }

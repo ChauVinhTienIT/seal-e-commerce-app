@@ -86,12 +86,12 @@ public class InventoryServiceImpl implements InventoryService {
         // Fetch the inventory entity by ID
         Inventory inventory = inventoryRepository.findById(inventoryId)
                 .orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_FOUND));
-
+        System.out.println(inventory.toString());
         // Map the entity to the response object
         return InventoryResponse.builder()
                 .id(inventory.getId())
-                .product(inventory.getProduct())
-                .color(inventory.getColor())
+//                .product(inventory.getProduct())
+//                .color(inventory.getColor())
                 .availableQuantity(inventory.getAvailableQuantity())
                 .listPrice(inventory.getListPrice())
                 .discountPercent(inventory.getDiscountPercent())
