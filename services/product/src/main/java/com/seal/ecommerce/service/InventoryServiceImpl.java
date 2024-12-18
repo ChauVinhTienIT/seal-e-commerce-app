@@ -4,10 +4,8 @@ import com.seal.ecommerce.dto.PageResponse;
 import com.seal.ecommerce.dto.request.InventoryCreationRequest;
 import com.seal.ecommerce.dto.request.InventoryPurchaseRequest;
 import com.seal.ecommerce.dto.request.InventoryUpdateRequest;
-import com.seal.ecommerce.dto.response.InventoryCreationResponse;
 import com.seal.ecommerce.dto.response.InventoryPurchaseResponse;
 import com.seal.ecommerce.dto.response.InventoryResponse;
-import com.seal.ecommerce.dto.response.InventoryUpdateResponse;
 import com.seal.ecommerce.entity.Color;
 import com.seal.ecommerce.entity.Inventory;
 import com.seal.ecommerce.entity.Product;
@@ -40,90 +38,51 @@ public class InventoryServiceImpl implements InventoryService {
     InventoryMapper inventoryMapper;
     InventoryRepository inventoryRepository;
     @Override
-    public InventoryCreationResponse createInventory(InventoryCreationRequest request) {
+    public InventoryResponse createInventory(InventoryCreationRequest request) {
         var productId = request.getProductId();
         var colorId = request.getColorId();
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         Color color = colorRepository.findById(colorId)
-                .orElseThrow(() -> new RuntimeException("Color not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.COLOR_NOT_FOUND));
         Inventory inventory = inventoryMapper.toInventoryFromCreationRequest(request);
         inventory.setProduct(product);
         inventory.setColor(color);
         product.setAvailable(true);
         productRepository.save(product);
-        return inventoryMapper.toInventoryCreationResponse(inventoryRepository.save(inventory));
+        return inventoryMapper.toInventoryResponse(inventoryRepository.save(inventory));
     }
 
     @Override
-    public InventoryUpdateResponse updateInventory(Integer inventoryId, InventoryUpdateRequest request) {
-        // Fetch the inventory entity by ID
-        Inventory inventory = inventoryRepository.findById(inventoryId)
+    public InventoryResponse updateInventory(InventoryUpdateRequest request) {
+        Inventory inventory = inventoryRepository.findById(request.getInventoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_FOUND));
-
-        // Update the inventory fields with the provided request data
-        inventory.setAvailableQuantity(request.getAvailableQuantity());
-        inventory.setListPrice(request.getListPrice());
-        inventory.setDiscountPercent(request.getDiscount());
-        inventory.setCost(request.getCost());
-        inventory.setEnabled(request.getEnabled());
-
-        // Save the updated inventory entity
-        inventoryRepository.save(inventory);
-
-        // Map the updated entity to the response object
-        return InventoryUpdateResponse.builder()
-                .availableQuantity(inventory.getAvailableQuantity())
-                .listPrice(inventory.getListPrice())
-                .discount(inventory.getDiscountPercent())
-                .cost(inventory.getCost())
-                .enabled(inventory.getEnabled())
-                .build();
+        if(request.getColorId() != null){
+            Color color = colorRepository.findById(request.getColorId())
+                    .orElseThrow(() -> new AppException(ErrorCode.COLOR_NOT_FOUND));
+            inventory.setColor(color);
+        }
+        inventoryMapper.updateInventoryFromRequest(request, inventory);
+        return inventoryMapper.toInventoryResponse(inventoryRepository.save(inventory));
     }
 
     @Override
     public InventoryResponse getInventory(Integer inventoryId) {
-        // Fetch the inventory entity by ID
         Inventory inventory = inventoryRepository.findById(inventoryId)
                 .orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_FOUND));
-        System.out.println(inventory.toString());
-        // Map the entity to the response object
-        return InventoryResponse.builder()
-                .id(inventory.getId())
-//                .product(inventory.getProduct())
-//                .color(inventory.getColor())
-                .availableQuantity(inventory.getAvailableQuantity())
-                .listPrice(inventory.getListPrice())
-                .discountPercent(inventory.getDiscountPercent())
-                .cost(inventory.getCost())
-                .enabled(inventory.getEnabled())
-                .build();
+        return inventoryMapper.toInventoryResponse(inventory);
     }
 
     @Override
     public List<InventoryResponse> getAllByProduct(Integer productId) {
-        // Fetch the product entity by ID
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-
         // Fetch all inventory entities associated with the product
-        List<Inventory> inventories = inventoryRepository.findByProduct(product);
+        var inventories = inventoryRepository.findByProductId(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND_IN_INVENTORY));
 
-        // Map the list of inventory entities to a list of response objects
         return inventories.stream()
-                .map(inventory -> InventoryResponse.builder()
-                        .id(inventory.getId())
-                        .product(inventory.getProduct())
-                        .color(inventory.getColor())
-                        .availableQuantity(inventory.getAvailableQuantity())
-                        .listPrice(inventory.getListPrice())
-                        .discountPercent(inventory.getDiscountPercent())
-                        .cost(inventory.getCost())
-                        .enabled(inventory.getEnabled())
-                        .build())
+                .map(inventoryMapper::toInventoryResponse)
                 .collect(Collectors.toList());
     }
-
     @Override
     public PageResponse<InventoryResponse> getAllToPage(long page, long size) {
         Sort sort = Sort.by("id").ascending();
@@ -157,7 +116,7 @@ public class InventoryServiceImpl implements InventoryService {
                         .inventoryId(purchaseRequest.getInventoryId())
                         .isSuccess(false)
                         .quantity(0)
-                        .message("Ordering failed!")
+                        .message("Ordering failed: " + exception.getMessage())
                         .build()
                 );
             }
@@ -172,15 +131,15 @@ public class InventoryServiceImpl implements InventoryService {
         if (inventory == null) {
             throw new IllegalArgumentException("Inventory not found for ID: " + purchaseRequest.getInventoryId());
         }
-        if (inventory.getAvailableQuantity() < purchaseRequest.getQuantity()) {
+        if (inventory.getAvailableQuantity() < purchaseRequest.getAvailableQuantity()) {
             throw new IllegalArgumentException("Insufficient stock for Inventory ID: " + purchaseRequest.getInventoryId());
         }
-        inventory.setAvailableQuantity(inventory.getAvailableQuantity() - purchaseRequest.getQuantity());
+        inventory.setAvailableQuantity(inventory.getAvailableQuantity() - purchaseRequest.getAvailableQuantity());
         inventoryRepository.save(inventory);
         return InventoryPurchaseResponse.builder()
                 .inventoryId(inventory.getId())
                 .isSuccess(true)
-                .quantity(purchaseRequest.getQuantity())
+                .quantity(purchaseRequest.getAvailableQuantity())
                 .message(inventory.getProduct().getName() + " "
                         + inventory.getColor().getName() + " "
                         + "is ordered successfully!")

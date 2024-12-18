@@ -5,10 +5,8 @@ import com.seal.ecommerce.dto.PageResponse;
 import com.seal.ecommerce.dto.request.InventoryCreationRequest;
 import com.seal.ecommerce.dto.request.InventoryPurchaseRequest;
 import com.seal.ecommerce.dto.request.InventoryUpdateRequest;
-import com.seal.ecommerce.dto.response.InventoryCreationResponse;
 import com.seal.ecommerce.dto.response.InventoryPurchaseResponse;
 import com.seal.ecommerce.dto.response.InventoryResponse;
-import com.seal.ecommerce.dto.response.InventoryUpdateResponse;
 import com.seal.ecommerce.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -27,25 +25,22 @@ public class InventoryController {
     private InventoryService inventoryService;
 
     @PostMapping
-    ApiResponse<InventoryCreationResponse> createInventory(
+    ApiResponse<InventoryResponse> createInventory(
             @RequestBody  @Valid InventoryCreationRequest request
             ){
-        return ApiResponse.<InventoryCreationResponse>builder()
-                .code(HttpStatus.OK.value())
+        return ApiResponse.<InventoryResponse>builder()
                 .message("Inventory create successfully")
                 .result(inventoryService.createInventory(request))
                 .build();
     }
     @PutMapping("/{id}")
-    ApiResponse<InventoryUpdateResponse> updateInventory(
-            @PathVariable("id") Integer inventoryId,
-            @RequestBody InventoryUpdateRequest request
+    ApiResponse<InventoryResponse> updateInventory(
+            @RequestBody @Valid InventoryUpdateRequest request
             )
     {
-        return ApiResponse.<InventoryUpdateResponse>builder()
-                .code(HttpStatus.OK.value())
+        return ApiResponse.<InventoryResponse>builder()
                 .message("Inventory update successfully")
-                .result(inventoryService.updateInventory(inventoryId, request))
+                .result(inventoryService.updateInventory(request))
                 .build();
     }
     @GetMapping("/{id}")
@@ -54,7 +49,6 @@ public class InventoryController {
     )
     {
         return ApiResponse.<InventoryResponse>builder()
-                .code(HttpStatus.OK.value())
                 .message("Inventory get successfully")
                 .result(inventoryService.getInventory(inventoryId))
                 .build();
@@ -65,7 +59,6 @@ public class InventoryController {
     )
     {
         return ApiResponse.<List<InventoryResponse>>builder()
-                .code(HttpStatus.OK.value())
                 .message("Inventory get all by product successfully")
                 .result(inventoryService.getAllByProduct(productId))
                 .build();
@@ -76,7 +69,6 @@ public class InventoryController {
             @RequestParam(value = "size", required = false, defaultValue = "10") long size
     ){
         return ApiResponse.<PageResponse<InventoryResponse>>builder()
-                .code(HttpStatus.OK.value())
                 .message("Inventory get all successfully")
                 .result(inventoryService.getAllToPage(page, size))
                 .build();
@@ -86,7 +78,6 @@ public class InventoryController {
             @RequestBody List<InventoryPurchaseRequest> request
     ){
         return ApiResponse.<List<InventoryPurchaseResponse>>builder()
-                .code(HttpStatus.OK.value())
                 .message("Inventory purchase successfully")
                 .result(inventoryService.purchase(request))
                 .build();

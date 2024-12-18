@@ -14,7 +14,7 @@ import java.util.Objects;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResponse<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiResponse<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         HashMap<String, String> errors = new HashMap<>();
 
         e.getBindingResult().getFieldErrors().forEach(
@@ -25,12 +25,13 @@ public class GlobalExceptionHandler {
                 }
         );
 
-        return
-            ApiResponse.builder()
-                    .code(HttpStatus.BAD_REQUEST.value())
-                    .message("Bad Request")
-                    .result(errors)
-                    .build();
+        return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .message("Invalid input")
+                        .result(errors)
+                        .build());
     }
 
     @ExceptionHandler(value = AppException.class)

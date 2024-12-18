@@ -18,7 +18,7 @@ public class InventoryCreationRequest {
     Integer availableQuantity;
     @NotNull
     Double listPrice;
-    Double discount;
+    Double discountPercent;
     Double cost;
     Integer enabled;
 }
