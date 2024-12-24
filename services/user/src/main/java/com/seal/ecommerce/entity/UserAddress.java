@@ -1,15 +1,17 @@
 package com.seal.ecommerce.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "user_addresses")
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_addresses_id_gen")
@@ -43,5 +45,4 @@ public class UserAddress {
 
     @Column(name = "updated_at")
     private Instant updatedAt;
-
 }
