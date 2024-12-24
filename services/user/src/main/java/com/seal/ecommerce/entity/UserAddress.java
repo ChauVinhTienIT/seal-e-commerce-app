@@ -17,8 +17,9 @@ public class UserAddress {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "address_line", length = Integer.MAX_VALUE)
     private String addressLine;
@@ -43,5 +44,4 @@ public class UserAddress {
 
     @Column(name = "updated_at")
     private Instant updatedAt;
-
 }

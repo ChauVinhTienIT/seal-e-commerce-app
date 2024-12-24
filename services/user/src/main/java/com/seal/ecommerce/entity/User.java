@@ -2,16 +2,27 @@ package com.seal.ecommerce.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.security.auth.Subject;
+import java.security.Principal;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
 
-@Getter
-@Setter
+@Data
+@Builder
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements
+        UserDetails, Principal {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_gen")
     @SequenceGenerator(name = "users_id_gen", sequenceName = "user_seq", allocationSize = 1)
@@ -43,10 +54,60 @@ public class User {
     @Column(name = "enabled")
     private Boolean enabled;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    List<Role> roles;
+
     @Column(name = "created_at")
+    @CreatedDate
     private Instant createdAt;
+
+    @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+    @Override
+    public String getName() {
+        return firstName + " " + lastName;
+    }
+
+    @Override
+    public boolean implies(Subject subject) {
+        return Principal.super.implies(subject);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+    @Override
+    public String getPassword(){
+        return password;
+    }
 
 /*
  TODO [Reverse Engineering] create field to map the 'role' column
