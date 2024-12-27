@@ -3,6 +3,7 @@ package com.seal.ecommerce.config;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,8 +26,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
     @Value("{server.servlet.context-path}")
+    @NonFinal
     public String contextPath;
-    public final String[] PUBLIC_ENDPOINTS = {"/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/swagger-ui/**"};
+    @NonFinal
+    public final String[] PUBLIC_ENDPOINTS = {"/auth/register", "/auth/login", "/swagger-ui/**", "/v3/api-docs"};
     AuthenticationProvider authenticationProvider;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

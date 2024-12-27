@@ -19,6 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "role")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@EntityListeners(AuditingEntityListener.class)
 public class Role {
 
     @Id

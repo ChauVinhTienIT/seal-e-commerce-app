@@ -1,5 +1,6 @@
 package com.seal.ecommerce.controller;
 
+import com.seal.ecommerce.dto.ApiResponse;
 import com.seal.ecommerce.dto.request.LoginRequest;
 import com.seal.ecommerce.dto.request.RegisterRequest;
 import com.seal.ecommerce.dto.response.LoginResponse;
@@ -21,18 +22,23 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
     AuthenticationService authenticationService;
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request)
+    public ApiResponse<?> register(@RequestBody @Valid RegisterRequest request)
             throws MessagingException {
         authenticationService.register(request);
-        return ResponseEntity.accepted().build();
+        return ApiResponse.<String>builder()
+                .message("Register successful")
+                .build();
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<LoginResponse> authenticate(
+    public ApiResponse<LoginResponse> authenticate(
             @RequestBody @Valid LoginRequest request
     )
     {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        return ApiResponse.<LoginResponse>builder()
+                .result(authenticationService.authenticate(request))
+                .build();
+
     }
     @GetMapping("/activate-account")
     public void activate(

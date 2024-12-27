@@ -3,17 +3,21 @@ package com.seal.ecommerce.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "user_addresses")
+@Table(name = "user_address")
+@EntityListeners(AuditingEntityListener.class)
 public class UserAddress {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_addresses_id_gen")
-    @SequenceGenerator(name = "user_addresses_id_gen", sequenceName = "user_address_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_address_id_gen")
+    @SequenceGenerator(name = "user_address_id_gen", sequenceName = "user_address_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -40,8 +44,10 @@ public class UserAddress {
     private Boolean isPrimary;
 
     @Column(name = "created_at")
+    @CreatedDate
     private Instant createdAt;
 
     @Column(name = "updated_at")
+    @LastModifiedDate
     private Instant updatedAt;
 }
