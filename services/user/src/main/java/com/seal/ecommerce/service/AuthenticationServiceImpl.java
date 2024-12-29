@@ -36,6 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     AuthenticationManager authenticationManager;
     JwtService jwtService;
     EmailService emailService;
+    UserRepository userRepository;
     @NonFinal
     @Value("{application.mailing.frontend.activation-url}")
     String activationUrl;
@@ -47,6 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .phoneNumber(request.getPhoneNumber())
                 .enabled(false)
                 .isVerified(false)
                 .roles(Collections.singletonList(userRole))

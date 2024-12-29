@@ -25,14 +25,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public User create(User user) {
-        System.out.println("ON Create");
-        if(!userRepository.existsById(15)){
-            System.out.println("Get id");
-        }
-        userRepository.findByEmail(user.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        System.out.println(user.getPhoneNumber());
         if (!userRepository.existsByEmail(user.getEmail())){
-
             System.out.println("Email not exists");
             return userRepository.save(user);
         }

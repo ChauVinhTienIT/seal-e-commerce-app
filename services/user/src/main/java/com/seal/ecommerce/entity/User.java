@@ -21,33 +21,31 @@ import java.util.List;
 @Data
 @Builder
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User implements
         UserDetails, Principal {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_gen")
-    @SequenceGenerator(name = "user_id_gen", sequenceName = "user_seq", allocationSize = 1)
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_gen")
+    @SequenceGenerator(name = "users_id_gen", sequenceName = "users_seq", allocationSize = 1)
+    @Column(name = "id")
     private Integer id;
 
-    @NotNull
-    @Column(name = "first_name", nullable = false, length = Integer.MAX_VALUE)
+
+    @Column(name = "first_name",  length = Integer.MAX_VALUE)
     private String firstName;
 
-    @NotNull
-    @Column(name = "last_name", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "last_name",  length = Integer.MAX_VALUE)
     private String lastName;
-
     @NotNull
-    @Column(name = "email", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "email", length = Integer.MAX_VALUE)
     private String email;
 
+    @NotNull
     @Column(name = "password", length = Integer.MAX_VALUE)
     private String password;
 
-    @NotNull
-    @Column(name = "phone_number", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "phone_number", length = Integer.MAX_VALUE)
     private String phoneNumber;
 
     @Column(name = "is_verified")

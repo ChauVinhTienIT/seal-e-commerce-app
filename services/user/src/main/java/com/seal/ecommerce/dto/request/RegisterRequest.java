@@ -23,6 +23,5 @@ public class RegisterRequest {
     @NotNull
     private String password;
 
-    @NotNull
     private String phoneNumber;
 }
