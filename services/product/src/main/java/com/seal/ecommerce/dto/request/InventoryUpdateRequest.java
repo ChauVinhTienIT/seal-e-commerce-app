@@ -1,5 +1,6 @@
 package com.seal.ecommerce.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,10 +10,12 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InventoryUpdateRequest {
+    @NotNull
     Integer inventoryId;
+    Integer colorId;
     Integer availableQuantity;
     Double listPrice;
-    Double discount;
+    Double discountPercent;
     Double cost;
     Integer enabled;
 }

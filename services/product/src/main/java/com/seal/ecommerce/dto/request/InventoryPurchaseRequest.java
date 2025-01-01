@@ -10,5 +10,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InventoryPurchaseRequest {
     Integer inventoryId;
-    Integer quantity;
+    Integer availableQuantity;
 }

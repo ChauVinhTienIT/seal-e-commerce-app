@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/user
+    url: jdbc:postgresql://localhost:5432/users
     username: alibou
     password: alibou
     driver-class-name: org.postgresql.Driver
@@ -17,6 +17,26 @@ spring:
     baseline-version: 0
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
+  mail:
+    host: localhost
+    port: 1025
+    username: seal
+    password: seal
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+application:
+  security:
+    jwt:
+      secret-key: ecommerce-2024-java-seal
+      jwtExpiration: 8640000
 server:
   servlet:
     context-path: /api/v1
