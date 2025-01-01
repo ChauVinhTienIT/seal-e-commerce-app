@@ -2,6 +2,7 @@ package com.seal.ecommerce.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 
 import javax.security.auth.Subject;
 import java.security.Principal;
@@ -25,6 +27,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class User implements
         UserDetails, Principal {
+  
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_gen")
     @SequenceGenerator(name = "users_id_gen", sequenceName = "users_seq", allocationSize = 1)

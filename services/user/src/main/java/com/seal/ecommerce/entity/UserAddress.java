@@ -1,19 +1,24 @@
 package com.seal.ecommerce.entity;
 
 import jakarta.persistence.*;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+
 import java.time.Instant;
 
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "user_address")
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_address_id_gen")
