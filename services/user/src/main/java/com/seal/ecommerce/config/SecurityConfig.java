@@ -29,7 +29,7 @@ public class SecurityConfig {
     @NonFinal
     public String contextPath;
     @NonFinal
-    public final String[] PUBLIC_ENDPOINTS = {"/auth/register", "/auth/login", "/swagger-ui/**", "/v3/api-docs"};
+    public final String[] PUBLIC_ENDPOINTS = {"/auth/register", "/auth/login", "/swagger-ui/**", "/v3/api-docs", "/auth/activate-account"};
     AuthenticationProvider authenticationProvider;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

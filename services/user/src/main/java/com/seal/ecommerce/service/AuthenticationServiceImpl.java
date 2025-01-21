@@ -94,7 +94,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             sendValidationEmail(user);
             throw new RuntimeException("Token has been expired. The new token has been sent");
         }
-        user.setEnabled(true);
+        user.setIsVerified(true);
         userService.save(user);
         authToken.setValidatedAt(LocalDateTime.now());
         tokenService.save(authToken);
