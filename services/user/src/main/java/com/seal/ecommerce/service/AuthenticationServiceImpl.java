@@ -8,6 +8,8 @@ import com.seal.ecommerce.entity.Role;
 import com.seal.ecommerce.entity.User;
 import com.seal.ecommerce.exception.AppException;
 import com.seal.ecommerce.exception.ErrorCode;
+import com.seal.ecommerce.keycloak.KeycloakService;
+import com.seal.ecommerce.keycloak.KeycloakUser;
 import com.seal.ecommerce.repository.RoleRepository;
 import com.seal.ecommerce.repository.UserRepository;
 import jakarta.mail.MessagingException;
@@ -15,6 +17,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import org.keycloak.admin.client.Keycloak;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,15 +31,17 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class AuthenticationServiceImpl implements AuthenticationService{
+public class AuthenticationServiceImpl
+        implements AuthenticationService{
     UserService userService;
     PasswordEncoder passwordEncoder;
     RoleService roleService;
     TokenService tokenService;
     AuthenticationManager authenticationManager;
-    JwtService jwtService;
+    //JwtService jwtService;
     EmailService emailService;
     UserRepository userRepository;
+    KeycloakService keycloakService;
     @NonFinal
     @Value("{application.mailing.frontend.activation-url}")
     String activationUrl;
@@ -54,6 +59,13 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                 .roles(Collections.singletonList(userRole))
                 .build();
         userService.create(user);
+        keycloakService.registerUser(KeycloakUser.builder()
+                        .username(request.getEmail())
+                        .email(request.getEmail())
+                        .firstName(request.getFirstName())
+                        .lastName(request.getLastName())
+                        .password(request.getPassword())
+                .build());
         sendValidationEmail(user);
     }
     private void sendValidationEmail(User user) throws MessagingException {
@@ -79,9 +91,9 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         var user = ((User)auth.getPrincipal());
         var claims = new HashMap<String, Object>();
         claims.put("fullName", user.getName());
-        var token = jwtService.generateToken(claims, user);
+        //var token = jwtService.generateToken(claims, user);
         return LoginResponse.builder()
-                .token(token)
+                //.token(token)
                 .build();
     }
 

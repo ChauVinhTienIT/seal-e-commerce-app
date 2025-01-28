@@ -18,5 +18,5 @@ import io.swagger.v3.oas.annotations.servers.Server;
         }
 )
 public class OpenApiConfig {
-
+        //                  /api/v1/v3/api-docs
 }

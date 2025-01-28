@@ -32,11 +32,23 @@ spring:
         connectiontimeout: 5000
         timeout: 3000
         writetimeout: 5000
-application:
   security:
-    jwt:
-      secret-key: ecommerce-2024-java-seal
-      jwtExpiration: 8640000
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:9090/realms/seal-ecommerce"
+keycloak:
+  server-url: http://localhost:9090
+  realm: seal-ecommerce
+  client-id: user-client
+  username: long
+  password: long
+#application:
+#  security:
+#    jwt:
+#      secret-key: ecommerce-2024-java-seal
+#      jwtExpiration: 8640000
+
 server:
   servlet:
     context-path: /api/v1

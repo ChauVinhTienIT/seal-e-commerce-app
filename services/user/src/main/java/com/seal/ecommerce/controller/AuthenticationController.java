@@ -46,4 +46,11 @@ public class AuthenticationController {
     ) throws MessagingException {
         authenticationService.activate(token);
     }
+    @GetMapping("/test")
+    public ApiResponse<String> test(){
+        return ApiResponse.<String>builder()
+                .code(100)
+                .result("Test Success")
+                .build();
+    }
 }
