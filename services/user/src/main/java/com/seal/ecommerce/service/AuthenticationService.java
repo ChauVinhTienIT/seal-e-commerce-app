@@ -4,11 +4,10 @@ import com.seal.ecommerce.dto.request.LoginRequest;
 import com.seal.ecommerce.dto.request.RegisterRequest;
 import com.seal.ecommerce.dto.response.LoginResponse;
 import jakarta.mail.MessagingException;
+import org.keycloak.representations.AccessTokenResponse;
 
 public interface AuthenticationService {
     void register(RegisterRequest request) throws MessagingException;
 
-    LoginResponse authenticate(LoginRequest request);
-
-    void activate(String token) throws MessagingException;
+    AccessTokenResponse authenticate(LoginRequest request);
 }

@@ -11,8 +11,15 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
+import org.springframework.security.core.GrantedAuthority;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,12 +37,12 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("/authenticate")
-    public ApiResponse<LoginResponse> authenticate(
+    @PostMapping("/login")
+    public ApiResponse<AccessTokenResponse> authenticate(
             @RequestBody @Valid LoginRequest request
     )
     {
-        return ApiResponse.<LoginResponse>builder()
+        return ApiResponse.<AccessTokenResponse>builder()
                 .result(authenticationService.authenticate(request))
                 .build();
 
@@ -44,13 +51,29 @@ public class AuthenticationController {
     public void activate(
             @RequestParam("token") String token
     ) throws MessagingException {
-        authenticationService.activate(token);
     }
     @GetMapping("/test")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ApiResponse<String> test(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
         return ApiResponse.<String>builder()
                 .code(100)
                 .result("Test Success")
+                .build();
+    }
+    @GetMapping("/test1")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ApiResponse<String> test1(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+        return ApiResponse.<String>builder()
+                .code(100)
+                .result("Test 1 Success")
                 .build();
     }
 }

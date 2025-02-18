@@ -48,6 +48,6 @@ public class SecurityConfig {
     }
     @Bean
     public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withIssuerLocation("http://localhost:9090/realms/seal-ecommerce").build();
+        return NimbusJwtDecoder.withIssuerLocation("http://localhost:9090/realms/seal").build();
     }
 }

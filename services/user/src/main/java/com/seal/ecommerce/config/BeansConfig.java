@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BeansConfig {
 
-    UserDetailsService userDetailsService;
+    //UserDetailsService userDetailsService;
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

@@ -36,19 +36,12 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "http://localhost:9090/realms/seal-ecommerce"
+          issuer-uri: "http://localhost:9090/realms/seal"
 keycloak:
   server-url: http://localhost:9090
-  realm: seal-ecommerce
-  client-id: user-client
-  username: long
-  password: long
-#application:
-#  security:
-#    jwt:
-#      secret-key: ecommerce-2024-java-seal
-#      jwtExpiration: 8640000
-
+  realm: seal
+  client-id: ecommerce-application
+  client-secret: 0792GxiBR7d0tyxdaEyl9u7yl1mENnSc
 server:
   servlet:
     context-path: /api/v1
